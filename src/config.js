@@ -7,8 +7,6 @@ module.exports = ({
     database: process.env.database,
     user: process.env.user,
     password: process.env.password,
-    whois: process.env.whois,
-    passwhois: process.env.passwhois,
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET
 });
