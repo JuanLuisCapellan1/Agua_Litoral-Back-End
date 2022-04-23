@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const config = require('./config');
-const routerUser = require('./routes/userRoutes');
+const routes = require('./routes/Routes');
 const cors = require('cors');
 const { expressjwt: jwt } = require("express-jwt");
 
@@ -54,9 +54,9 @@ app.use(
 
 
 //Routes
-app.use('/api', routerUser);
+app.use('/api', routes);
 
-//Middlewares
+//middleware
 app.use(function (err, _req, res, _next) {
     res.status(err.status_code || 500).json({
         error: {...err, message: err.message, stack: err.stack},
