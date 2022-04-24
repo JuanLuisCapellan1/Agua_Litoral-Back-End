@@ -90,4 +90,25 @@ async function LoginEmailProcess(data){
   }
 }
 
-module.exports = { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess };
+async function paginationProcess(result, page, limit){
+  const connection = await getConnection();
+  result.map(obj => {
+    if(obj.connected === 1){
+      obj.connected = true;
+    }
+    else if(obj.connected === 0){
+      obj.connected = false;
+    }
+  });
+  const rows = await connection.query(`SELECT COUNT(*) AS numRows FROM users`);
+  var numRows = rows[0].numRows;
+  const totalPage = Math.ceil(numRows / limit);
+  return {
+    Total_Users: result.length,
+    Current_page: page,
+    Total_pages: totalPage,
+    users: result
+  };
+}
+
+module.exports = { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess, paginationProcess };

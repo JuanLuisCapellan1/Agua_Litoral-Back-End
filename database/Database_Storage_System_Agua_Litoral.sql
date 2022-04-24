@@ -28,6 +28,7 @@ CREATE TABLE `users` (
     CONSTRAINT FK_TYPE_USER FOREIGN KEY (`TYPE_USER_ID`) REFERENCES `type_user` (`ID`)
 )DEFAULT CHARSET=latin1;
 
+SELECT u.Id, u.email, u.username, u.password, u.created_at, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id;
 TRUNCATE TABLE USERS;	
 SELECT * FROM USERS;
 INSERT INTO USERS VALUES ('2', 'TEST@gmail.com', 'TEST', '$2a$10$PaAg/mm2hTE0AVCDODyzC.HwW5MLDEIR3E95nkMVRP9lmX32CCKa/O', '2022-04-23 22:14:45', '2', '0');

@@ -1,19 +1,27 @@
 const { getConnection } = require('../database');
 
-async function validateDataRegisterEmployee(data){
-  let result = {};
-  if(data.email === undefined || data.email === null || data.email === ""){
-    throw new Error( 'Please provide an email' );
+async function validateDataTypeEmployee(job_position){
+  if(job_position === undefined || job_position === null || job_position === ""){
+    throw new Error( 'PLEASE PROVIDE A JOB POSITION' );
   }
-  else if(data.username === undefined || data.username === null || data.username === ""){
-    throw new Error( 'Please provide an username' );
-  }
-  else if(data.password === undefined || data.password === null || data.password === ""){
-    throw new Error( 'Please provide an password' );
-  }
-  else if(data.type_user_Id === undefined || data.password === null || isNaN(data.type_user_Id) || data.type_user_Id === "" ){
-    throw new Error( 'Please provide an correct type id' );
+  const connection = await getConnection();
+  const result = await connection.query(`SELECT * FROM type_employees WHERE JOB_POSITION = '${job_position}'`);
+  if(result.length > 0){
+    throw new Error('THERE ALREADY SAVED THAT JOB POSITION');
   }
 }
 
+async function paginationProcessTypeEmployee(result, page, limit){
+  const connection = await getConnection();
+  const rows = await connection.query(`SELECT COUNT(*) AS numRows FROM type_employees`);
+  var numRows = rows[0].numRows;
+  const totalPage = Math.ceil(numRows / limit);
+  return {
+    Total_Users: result.length,
+    Current_page: page,
+    Total_pages: totalPage,
+    users: result
+  };
+}
 
+module.exports = { validateDataTypeEmployee, paginationProcessTypeEmployee };

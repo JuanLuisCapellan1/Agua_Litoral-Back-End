@@ -2,9 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const config = require('./config');
-const routes = require('./routes/Routes');
 const cors = require('cors');
 const { expressjwt: jwt } = require("express-jwt");
+
+
+const routesUser = require('./routes/routesUser');
+const routesEmployees = require('./routes/routesEmployee');
 
 //Initializations
 const app = express();
@@ -29,15 +32,16 @@ app.use(
       if(result !== null){
         invalidRoutes = [
           '/',
+          '/api/refresh-token',
           '/api/login',
           result.input,
         ];
       }
       else{
          invalidRoutes = [
-           '/api/register',
-            '/',
-            '/api/login',
+          '/',
+          '/api/refresh-token', 
+          '/api/login',
         ];
       }
   
@@ -54,8 +58,10 @@ app.use(
 );
 
 
-//Routes
-app.use('/api', routes);
+//Routes User
+app.use('/api', routesUser);
+app.use('/api', routesEmployees);
+
 
 //middleware
 app.use(function (err, _req, res, _next) {

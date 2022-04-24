@@ -1,7 +1,7 @@
 const { getConnection } = require('../database');
 const TimeAgo = require('javascript-time-ago');
 const en =  require('javascript-time-ago/locale/en.json');
-const { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess } = require('../services/validationUsers');
+const { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess, paginationProcess } = require('../services/validationUsers');
 const { encryptPassword, matchPassword } = require('../helpers/encrypting');
 const { validateRoleUser } = require('../services/validateTypeUser');
 
@@ -10,20 +10,17 @@ const {generateAccessToken, generateRefreshToken} = require('../helpers/jwtServi
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
-const getUsers = async (_req, res, next) => {
+const getUsers = async (req, res, next) => {
   try {
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 9);
+    const offset = (page - 1) * limit;
     const connection = await getConnection();
-    const result = await connection.query('SELECT u.Id, u.email, u.username, u.password, u.created_at, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id;');
+    const result = await connection.query(`SELECT u.Id, u.email, u.username, u.password, u.created_at, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id LIMIT ${limit} offset ${offset};`);
     result.map(obj => obj.created_at = timeAgo.format(obj.created_at));
-    result.map(obj => {
-      if(obj.connected === 1){
-        obj.connected = true;
-      }
-      else if(obj.connected === 0){
-        obj.connected = false;
-      }
-    });
-    res.json(result);
+    const jsonResult = await paginationProcess(result, page, limit);
+    const myJsonString = JSON.parse(JSON.stringify(jsonResult));
+    res.json(myJsonString);
   } catch (error) {
     next(error);
   }
@@ -51,36 +48,44 @@ const getUserById = async (req, res, next) => {
 
 const getUserByName = async (req, res, next) => {
   try {
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 9);
+    const offset = (page - 1) * limit;
     const connection = await getConnection();  
     let result = {};
     if(req.query.email){
-      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${req.query.email}%' `);
-      if(result[0].connected === 1){
-        result[0].connected = true;
-      }
-      else if(result[0].connected === 0){
-        result[0].connected = false;
+      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${req.query.email}%' LIMIT ${limit} OFFSET ${offset}`);
+      if(result.length < 1){
+        throw new Error(`NO USERS FOUND BY ${req.query.email}`);
       }
     }
     else if(req.query.username){
-      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${req.query.username}%' `);
-      if(result[0].connected === 1){
-        result[0].connected = true;
-      }
-      else if(result[0].connected === 0){
-        result[0].connected = false;
+      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${req.query.username}%' LIMIT ${limit} OFFSET ${offset}`);
+      if(result.length < 1){
+        throw new Error(`NO USERS FOUND BY ${req.query.username}`);
       }
     }
-    res.json(result);
+    else{
+      throw new Error(`PLEASE PROVIDE AN EMAIL OR USERNAME`);
+    }
+    const jsonResult = await paginationProcess(result, page, limit);
+    const myJsonString = JSON.parse(JSON.stringify(jsonResult));
+    res.json(myJsonString);
   } catch (error) {
     next(error);
   }
 }
 
-const getAllTypeUser = async(_req, res, next) => {
+const getAllTypeUser = async(req, res, next) => {
   try {
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 9);
+    const offset = (page - 1) * limit;
     const connection = await getConnection();
-    res.json(await connection.query(`SELECT * FROM type_user`)); 
+    const result = await connection.query(`SELECT * FROM type_user LIMIT ${limit} OFFSET ${offset}`); 
+    const jsonResult = await paginationProcess(result, page, limit);
+    const myJsonString = JSON.parse(JSON.stringify(jsonResult));
+    res.json(myJsonString);
   } catch (error) {
     next(error)
   }
@@ -151,11 +156,13 @@ const postNewRoleUser = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   try {
-    if(!req.body.id){
+    if(!req.params.id){
       throw new Error( 'Please provide an ID');
     }
     const connection = await getConnection();
-    const userData = { ...req.body };
+    const { id } = req.params;
+    let userData = { ...req.body };
+    userData.id = id;
     if(req.body.email){
       const result = await connection.query('SELECT email FROM users WHERE email = ?', userData.email);
       if(result.length !== 0){
