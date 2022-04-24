@@ -35,6 +35,7 @@ app.use(
       }
       else{
          invalidRoutes = [
+           '/api/register',
             '/',
             '/api/login',
         ];

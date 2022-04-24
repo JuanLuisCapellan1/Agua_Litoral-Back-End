@@ -1,5 +1,5 @@
 const { getConnection } = require('../database');
-const { matchPassword } = require('./encrypting');
+const { matchPassword } = require('../helpers/encrypting');
 
 async function validateDataRegister(data){
   if(data.email === undefined || data.email === null || data.email === ""){
@@ -43,14 +43,14 @@ async function validateDataLogin(data){
 async function LoginProcess(data){
   const connection = await getConnection();
   let result = {};
-  result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.type FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${data.username}%' `);
+  result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${data.username}%' `);
   if(result.length > 0){
     if(!await matchPassword(data.password, result[0].password)){
       throw new Error( `Invalid Credentials, passwords don't match `);
     }
     else{
       await connection.query(`UPDATE users SET connected = 1 WHERE username LIKE '%${data.username}%'`);
-      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.type FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${data.username}%' `);
+      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.username LIKE '%${data.username}%' `);
       if(result[0].connected === 1){
         result[0].connected = true;
       }
@@ -68,14 +68,14 @@ async function LoginProcess(data){
 async function LoginEmailProcess(data){
   const connection = await getConnection();
   let result = {};
-  result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.type FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${data.email}%' `);
+  result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${data.email}%' `);
   if(result.length > 0){
     if(!await matchPassword(data.password, result[0].password)){
       throw new Error( `Invalid Credentials, passwords don't match `);
     }
     else{
       await connection.query(`UPDATE users SET connected = 1 WHERE email LIKE '%${data.email}%'`);
-      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.type FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${data.email}%' `);
+      result = await connection.query(`SELECT u.id, u.username, u.email, u.password, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id WHERE u.email LIKE '%${data.email}%' `);
       if(result[0].connected === 1){
         result[0].connected = true;
       }

@@ -38,14 +38,16 @@ async function getIdTokenUsers(req, res, next) {
   });
 }
 
-async function validateRoleAdmin(loginId){
+async function validateRoleAdmin(req, res, next){
+  const loginId = req.user;
   const connection = await getConnection();
-  let result = await connection.query(`SELECT u.id, u.username, t.type FROM users AS u JOIN type_user AS t ON u.type_user_id = t.id WHERE u.id = ${loginId}`);
-  if(result[0].type === 'ADMIN'){
-    return result[0];
-  }else{
-    throw new Error(`You don't have access to this site`);
+  let result = await connection.query(`SELECT u.id, u.username, t.role FROM users AS u JOIN type_user AS t ON u.type_user_id = t.id WHERE u.id = ${loginId}`);
+  if(result[0].role !== 'ADMIN'){
+    return res.status(500).json({
+      message: "You don't have access to this site"
+    });
   }
+  next();
 }
 
 module.exports = {

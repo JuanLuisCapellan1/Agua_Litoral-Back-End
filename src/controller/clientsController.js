@@ -1,5 +1,5 @@
 const { getConnection } = require('../database');
-const validationUsers= require('../helpers/validationUsers');
+const validationUsers= require('../services/validationUsers');
 const jwtServices = require('../helpers/jwtServices');
 
 const getAllClient = async (req, res, next) => {
