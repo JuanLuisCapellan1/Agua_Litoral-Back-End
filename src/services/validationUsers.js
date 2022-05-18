@@ -11,7 +11,7 @@ async function validateDataRegister(data){
   else if(data.password === undefined || data.password === null || data.password === ""){
     throw new Error( 'Please provide an password' );
   }
-  else if(data.type_user_Id === undefined || data.password === null || isNaN(data.type_user_Id) || data.type_user_Id === "" ){
+  else if(data.type_user_Id === undefined || data.type_user_Id === null || isNaN(data.type_user_Id) || data.type_user_Id === "" ){
     throw new Error( 'Please provide an correct type id' );
   }
 }

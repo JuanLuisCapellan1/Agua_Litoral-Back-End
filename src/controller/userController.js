@@ -2,8 +2,9 @@ const { getConnection } = require('../database');
 const TimeAgo = require('javascript-time-ago');
 const en =  require('javascript-time-ago/locale/en.json');
 const { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess, paginationProcess } = require('../services/validationUsers');
-const { encryptPassword, matchPassword } = require('../helpers/encrypting');
+const { encryptPassword } = require('../helpers/encrypting');
 const { validateRoleUser } = require('../services/validateTypeUser');
+const bcrypt = require('bcrypt');
 
 const {generateAccessToken, generateRefreshToken} = require('../helpers/jwtServices');
 
@@ -155,7 +156,7 @@ const postNewRoleUser = async (req, res, next) => {
 }
 
 const updateUser = async (req, res, next) => {
-  try {
+  try { 
     if(!req.params.id){
       throw new Error( 'Please provide an ID');
     }
@@ -169,11 +170,18 @@ const updateUser = async (req, res, next) => {
           throw new Error('There are already user with that email');
       }
     }
-    else if(req.body.username){
+    if(req.body.username){
       const result = await connection.query('SELECT username FROM users WHERE username = ?', userData.username);
       if(result.length !== 0){
           throw new Error('There are already user with that username');
       }
+    }
+    if(req.body.password){
+      const userPassword = await connection.query('SELECT PASSWORD FROM users WHERE ID = ?', userData.id);
+      if(userPassword.length === 0){
+        throw new Error(`Id provided not exists`);
+      }
+      userData.password = await encryptPassword(userData.password);
     }
     await connection.query(`UPDATE USERS SET ? WHERE ID = ?`, [userData, userData.id]);
     res.json({message: 'User Updated Successfully'})
