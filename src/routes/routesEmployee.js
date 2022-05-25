@@ -15,6 +15,7 @@ router.post('/employee', [jwtServices.getIdTokenUsers, jwtServices.validateRoleA
 
 //UPDATE ROUTES EMPLOYEES
 router.put('/type-employee/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.updateTypeEmployee);
+router.put('/employees/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.updateEmployee);
 
 //DELETE ROUTES EMPLOYEES
 router.delete('/type-employee/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin],employeeController.deleteTypeEmployee);
