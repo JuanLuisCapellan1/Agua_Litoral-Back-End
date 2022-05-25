@@ -2,9 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const config = require('./config');
-const routerUser = require('./routes/userRoutes');
 const cors = require('cors');
 const { expressjwt: jwt } = require("express-jwt");
+
+
+const routesUser = require('./routes/routesUser');
+const routesEmployees = require('./routes/routesEmployee');
 
 //Initializations
 const app = express();
@@ -29,14 +32,16 @@ app.use(
       if(result !== null){
         invalidRoutes = [
           '/',
+          '/api/refresh-token',
           '/api/login',
           result.input,
         ];
       }
       else{
          invalidRoutes = [
-            '/',
-            '/api/login',
+          '/',
+          '/api/refresh-token', 
+          '/api/login',
         ];
       }
   
@@ -53,10 +58,12 @@ app.use(
 );
 
 
-//Routes
-app.use('/api', routerUser);
+//Routes User
+app.use('/api', routesUser);
+app.use('/api', routesEmployees);
 
-//Middlewares
+
+//middleware
 app.use(function (err, _req, res, _next) {
     res.status(err.status_code || 500).json({
         error: {...err, message: err.message, stack: err.stack},
