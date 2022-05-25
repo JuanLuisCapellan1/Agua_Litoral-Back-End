@@ -5,7 +5,7 @@ const config = require('./config');
 const cors = require('cors');
 const { expressjwt: jwt } = require("express-jwt");
 
-
+const routesClient = require('./routes/routesClient');
 const routesUser = require('./routes/routesUser');
 const routesEmployees = require('./routes/routesEmployee');
 
@@ -61,6 +61,7 @@ app.use(
 //Routes User
 app.use('/api', routesUser);
 app.use('/api', routesEmployees);
+app.use('/api', routesClient);
 
 
 //middleware
