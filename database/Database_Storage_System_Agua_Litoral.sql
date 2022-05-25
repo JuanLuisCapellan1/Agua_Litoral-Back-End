@@ -8,10 +8,6 @@ CREATE TABLE `type_user` (
     `ROLE` VARCHAR(64) NOT NULL,
     PRIMARY KEY (`ID`)
 )DEFAULT CHARSET=latin1;
-TRUNCATE TABLE TYPE_USER;
-insert into type_user (`role`) values ('ADMIN');
-insert into type_user (`role`) values ('EMPLOYEE');
-select * from type_user;
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` ( 
@@ -28,28 +24,12 @@ CREATE TABLE `users` (
     CONSTRAINT FK_TYPE_USER FOREIGN KEY (`TYPE_USER_ID`) REFERENCES `type_user` (`ID`)
 )DEFAULT CHARSET=latin1;
 
-SELECT u.Id, u.email, u.username, u.password, u.created_at, u.connected, t.role FROM users as u join type_user as t on u.type_user_Id = t.Id;
-TRUNCATE TABLE USERS;	
-SELECT * FROM USERS;
-INSERT INTO USERS VALUES ('2', 'TEST@gmail.com', 'TEST', '$2a$10$PaAg/mm2hTE0AVCDODyzC.HwW5MLDEIR3E95nkMVRP9lmX32CCKa/O', '2022-04-23 22:14:45', '2', '0');
-DELETE FROM USERS WHERE ID = 2;
-
 DROP TABLE IF EXISTS `type_employees`;
 CREATE TABLE `type_employees`(
 	`ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `JOB_POSITION` VARCHAR(64) NOT NULL UNIQUE,
     PRIMARY KEY (`ID`)
 )DEFAULT CHARSET=latin1;
-
-insert into type_employees (job_position) values ('PARTNER');
-insert into type_employees (job_position) values ('GENERAL MANAGER');
-insert into type_employees (job_position) values ('ASSISTANT');
-insert into type_employees (job_position) values ('SECRETARY');
-insert into type_employees (job_position) values ('DELIVERY');
-
-SELECT * FROM type_employees WHERE JOB_POSITION = 'DELIVERY';
-select * from type_employees order by id asc;
-select * from type_employees;
 
 DROP TABLE IF EXISTS `employees`;
 CREATE TABLE `employees` (
@@ -72,8 +52,6 @@ CREATE TABLE `employees` (
   CONSTRAINT FK_TYPE_ROLE_EMPLOYEE FOREIGN KEY (`TYPE_EMPLOYEE`) REFERENCES `type_employees` (`ID`),
   CONSTRAINT FK_USER_EMPLOYEE FOREIGN KEY (`ID_USER`) REFERENCES `users` (`ID`)
 )DEFAULT CHARSET=latin1;
-
-
 
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
@@ -126,8 +104,3 @@ CREATE TABLE `inventario` (
   UNIQUE KEY `I_CONCEPTO` (`CONCEPTO`),
   KEY `I_INGRESO` (`INGRESO`)
 ) AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
-
-
-
-
