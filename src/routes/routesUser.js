@@ -27,9 +27,4 @@ router.delete('/type-user/:id', [jwtServices.getIdTokenUsers, jwtServices.valida
 router.put('/user/update/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], userController.updateUser);
 router.put('/type-user/update/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], userController.updateTypeUser);
 
-//==========================================================CLIENT ROUTES========================================================>>>>
-//GET ROUTES Client
-/*router.get('/clients', [jwtServices.getIdTokenUsers], clientController.getAllClient);
-router.get('/client:id', [jwtServices.getIdTokenUsers], clientController.getClientById);
-*/
 module.exports = router;
