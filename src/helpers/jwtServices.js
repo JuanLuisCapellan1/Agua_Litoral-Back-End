@@ -42,9 +42,45 @@ async function validateRoleAdmin(req, res, next){
   const loginId = req.user;
   const connection = await getConnection();
   let result = await connection.query(`SELECT u.id, u.username, t.role FROM users AS u JOIN type_user AS t ON u.type_user_id = t.id WHERE u.id = ${loginId}`);
-  if(result[0].role !== 'ADMIN'){
+  if(!['ADMIN', 'MANAGER'].includes(result[0].role)){
     return res.status(500).json({
       message: "You don't have access to this site"
+    });
+  }
+  next();
+}
+
+async function validateRoleChecker(req, res, next){
+  const loginId = req.user;
+  const connection = await getConnection();
+  let result = await connection.query(`SELECT u.id, u.username, t.role FROM users AS u JOIN type_user AS t on u.type_user_id = t.id WHERE u.id = ${loginId}`);
+  if(!['ADMIN', 'CHECKER', 'MANAGER'].includes(result[0].role)){
+    return res.status(500).json({
+      message: "YOU DON'T HAVE ACCESS TO THIS SITE"
+    });
+  }
+  next();
+}
+
+async function validateRoleAuxManager(req, res, next){
+  const loginId = req.user;
+  const connection = await getConnection();
+  let result = await connection.query(`SELECT u.id, u.username, t.role FROM users AS u JOIN type_user AS t on u.type_user_id = t.id WHERE u.id = ${loginId}`);
+  if(!['ADMIN', 'ASSISTANT ADMINISTRATIVE', 'MANAGER'].includes(result[0].role)){
+    return res.status(500).json({
+      message: "YOU DON'T HAVE ACCESS TO THIS SITE"
+    });
+  }
+  next();
+}
+
+async function validateRoleAccountant(req, res, next){
+  const loginId = req.user;
+  const connection = await getConnection();
+  let result = await connection.query(`SELECT u.id, u.username, t.role FROM users AS u JOIN type_user AS t on u.type_user_id = t.id WHERE u.id = ${loginId}`);
+  if(!['ADMIN', 'ASSISTANT ADMINISTRATIVE', 'MANAGER', 'ACCOUNTANT'].includes(result[0].role)){
+    return res.status(500).json({
+      message: "YOU DON'T HAVE ACCESS TO THIS SITE"
     });
   }
   next();
@@ -55,5 +91,8 @@ module.exports = {
   generateRefreshToken,
   verifyRefreshToken,
   getIdTokenUsers,
-  validateRoleAdmin
+  validateRoleAdmin,
+  validateRoleChecker,
+  validateRoleAuxManager,
+  validateRoleAccountant
 };
