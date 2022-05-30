@@ -8,6 +8,7 @@ const jwtServices = require('../helpers/jwtServices');
 router.get('/type-employee', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.getAllTypeEmployee);
 router.get('/employee/:id', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.getEmployeeById);
 router.get('/employees', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.getAllEmployee);
+router.get('/employee', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.getEmployeeByName);
 
 //POST ROUTES EMPLOYEES
 router.post('/type-employee', [jwtServices.getIdTokenUsers, jwtServices.validateRoleAdmin], employeeController.postNewTypeEmployee);

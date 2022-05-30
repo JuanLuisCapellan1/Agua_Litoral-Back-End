@@ -50,6 +50,30 @@ const getEmployeeById = async (req, res, next) => {
   }
 }
 
+const getEmployeeByName = async (req, res, next) => {
+  try {
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 9);
+    const offset = (page - 1) * limit;
+    const connection = await getConnection();  
+    let result = {};
+    if(req.query.name){
+      result = await connection.query(`SELECT * FROM employees WHERE FIRST_NAME LIKE '%${req.query.name}%' or LAST_NAME LIKE '%${req.query.name}%' LIMIT ${limit} OFFSET ${offset}`);
+      if(result.length < 1){
+        throw new Error(`NO USERS FOUND BY ${req.query.name}`);
+      }
+    }
+    else{
+      throw new Error(`PLEASE PROVIDE AN EMAIL OR NAME`);
+    }
+    const jsonResult = await validatorEmployee.paginationProcessTypeEmployee(result, page, limit);
+    const myJsonString = JSON.parse(JSON.stringify(jsonResult));
+    res.json(myJsonString);
+  }catch (error) {
+    next(error);
+  }
+}
+
 const postNewTypeEmployee = async (req, res, next) =>{
   try {
     const data = {
@@ -141,4 +165,4 @@ const deleteEmployee = async (req, res, next) => {
   }
 }
 
-module.exports = { postNewTypeEmployee, getAllTypeEmployee, updateTypeEmployee, deleteTypeEmployee, postNewEmployee, getEmployeeById, getAllEmployee, updateEmployee, deleteEmployee };
+module.exports = { postNewTypeEmployee, getEmployeeByName, getAllTypeEmployee, updateTypeEmployee, deleteTypeEmployee, postNewEmployee, getEmployeeById, getAllEmployee, updateEmployee, deleteEmployee };
