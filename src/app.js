@@ -8,6 +8,7 @@ const { expressjwt: jwt } = require("express-jwt");
 const routesClient = require('./routes/routesClient');
 const routesUser = require('./routes/routesUser');
 const routesEmployees = require('./routes/routesEmployee');
+const routesProduct = require('./routes/routesProducts');
 
 //Initializations
 const app = express();
@@ -62,6 +63,7 @@ app.use(
 app.use('/api', routesUser);
 app.use('/api', routesEmployees);
 app.use('/api', routesClient);
+app.use('/api', routesProduct);
 
 
 //middleware

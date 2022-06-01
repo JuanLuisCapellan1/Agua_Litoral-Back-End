@@ -4,7 +4,6 @@ const en =  require('javascript-time-ago/locale/en.json');
 const { validateDataRegister, validateDuplicateDataRegister, validateDataLogin, LoginProcess, LoginEmailProcess, paginationProcess } = require('../services/validationUsers');
 const { encryptPassword } = require('../helpers/encrypting');
 const { validateRoleUser } = require('../services/validateTypeUser');
-const bcrypt = require('bcrypt');
 
 const {generateAccessToken, generateRefreshToken} = require('../helpers/jwtServices');
 
