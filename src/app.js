@@ -8,6 +8,7 @@ const { expressjwt: jwt } = require("express-jwt");
 const routesClient = require('./routes/routesClient');
 const routesUser = require('./routes/routesUser');
 const routesEmployees = require('./routes/routesEmployee');
+const routesProduct = require('./routes/routesProducts');
 
 //Initializations
 const app = express();
@@ -24,11 +25,11 @@ app.use(
       secret: config.ACCESS_TOKEN_SECRET,
       algorithms: ['HS256'],
     }).unless(function (req) {
-      var routeUpdate= '/api/user/:id';
-      var routerMatcher = new RegExp(routeUpdate.replace(/:[^\s/]+/g, '([\\w-]+)'));
-      var url = req.originalUrl;
-      var result = url.match(routerMatcher);
-      var invalidRoutes = [];
+      let routeUpdate= '/api/user/:id';
+      let routerMatcher = new RegExp(routeUpdate.replace(/:[^\s/]+/g, '([\\w-]+)'));
+      let url = req.originalUrl;
+      let result = url.match(routerMatcher);
+      let invalidRoutes = [];
       if(result !== null){
         invalidRoutes = [
           '/',
@@ -62,6 +63,7 @@ app.use(
 app.use('/api', routesUser);
 app.use('/api', routesEmployees);
 app.use('/api', routesClient);
+app.use('/api', routesProduct);
 
 
 //middleware
