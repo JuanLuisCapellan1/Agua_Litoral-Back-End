@@ -25,11 +25,11 @@ app.use(
       secret: config.ACCESS_TOKEN_SECRET,
       algorithms: ['HS256'],
     }).unless(function (req) {
-      var routeUpdate= '/api/user/:id';
-      var routerMatcher = new RegExp(routeUpdate.replace(/:[^\s/]+/g, '([\\w-]+)'));
-      var url = req.originalUrl;
-      var result = url.match(routerMatcher);
-      var invalidRoutes = [];
+      let routeUpdate= '/api/user/:id';
+      let routerMatcher = new RegExp(routeUpdate.replace(/:[^\s/]+/g, '([\\w-]+)'));
+      let url = req.originalUrl;
+      let result = url.match(routerMatcher);
+      let invalidRoutes = [];
       if(result !== null){
         invalidRoutes = [
           '/',
