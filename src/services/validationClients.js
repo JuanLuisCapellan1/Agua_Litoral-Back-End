@@ -12,21 +12,29 @@ async function validationNewClient(data){
   if(data.name === undefined || data.name === null || data.name === ""){
     throw new Error('PLEASE PROVIDE A NAME');
   }
-  else if(data.address === undefined || data.address === null || data.address === ""){
+  if(data.address === undefined || data.address === null || data.address === ""){
     throw new Error('PLEASE PROVIDE AN ADDRESS');
   }
-  else if(data.email === undefined || data.email === null || data.email === ""){
+  if(data.email === undefined || data.email === null || data.email === ""){
     throw new Error('PLEASE PROVIDE AN EMAIL ADDRESS');
   }
-  else if(data.phone === undefined || data.phone === null || data.phone === ""){
+  if(data.phone === undefined || data.phone === null || data.phone === ""){
     throw new Error('PLEASE PROVIDE A PHONE NUMBER');
   }
-  else if(data.status === undefined || data.status === null || data.status === ""){
+  if(data.status === undefined || data.status === null || data.status === ""){
     throw new Error('PLEASE PROVIDE A CORRECT STATUS');
+  }
+  await validateStatusClient(data.status);
+}
+
+async function validateStatusClient(status){
+  if(!['active', 'disable'].includes(status)){
+    throw new Error( 'PROVIDE CORRECT CLIENT STATUS' );
   }
 }
 
 module.exports = {
   validateEmailClientDuplicated,
-  validationNewClient
+  validationNewClient,
+  validateStatusClient
 }

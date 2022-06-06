@@ -121,13 +121,21 @@ const updateTypeEmployee = async (req, res, next) => {
 
 const updateEmployee = async (req, res, next) => {
   try {
+    const connection = await getConnection();
     if(!req.params.id){
       throw new Error('Please provide an ID');
     }
     const employee = { ...req.body };
-    employee.id = req.params.id;
-    const connection = await getConnection();
-    await connection.query(`UPDATE EMPLOYEES SET ? WHERE ID = ?`, [employee, employee.id]);
+    if(req.params.id){
+      let resp = await connection.query(`SELECT ID FROM EMPLOYEES WHERE ID = ${req.params.id}`);
+      if(resp.length === 0){
+        throw new Error('INVALID EMPLOYEE ID PROVIDED');
+      }
+    }
+    if(employee.status){
+      await validatorEmployee.validateStatusEmployee(employee.status);
+    }
+    await connection.query(`UPDATE EMPLOYEES SET ? WHERE ID = ?`, [employee, req.params.id]);
     res.json({message: 'EMPLOYEE UPDATED SUCCESSFULLY'});
   } catch (error) {
     next(error);
