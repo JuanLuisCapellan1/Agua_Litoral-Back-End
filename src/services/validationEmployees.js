@@ -4,6 +4,9 @@ async function validateDataTypeEmployee(job_position){
   if(job_position === undefined || job_position === null || job_position === ""){
     throw new Error( 'PLEASE PROVIDE A JOB POSITION' );
   }
+  if(!isNaN(job_position)){
+    throw new Error('INVALID INPUT PROVIDED');
+  }
   const connection = await getConnection();
   const result = await connection.query(`SELECT * FROM type_employees WHERE JOB_POSITION = '${job_position}'`);
   if(result.length > 0){
@@ -48,8 +51,8 @@ async function validateDataNewEmployee(data){
   else if(data.status === undefined || data.status === null || data.status === ""){
     throw new Error('PLEASE PROVIDE A STATUS');
   }
-  else if(data.type_employee === undefined || data.type_employee === null || data.type_employee === ""){
-    throw new Error('PLEASE PROVIDE A TYPE EMPLOYEE')
+  else if(data.type_employee === undefined || data.type_employee === null || isNaN(data.type_employee)){
+    throw new Error('PLEASE PROVIDE A CORRECT TYPE EMPLOYEE')
   }
   await validateNumberData(data);
   await validateStatusEmployee(data.status);

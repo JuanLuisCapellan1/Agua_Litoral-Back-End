@@ -5,14 +5,23 @@ async function validateDataRegister(data){
   if(data.email === undefined || data.email === null || data.email === ""){
     throw new Error( 'Please provide an email' );
   }
-  else if(data.username === undefined || data.username === null || data.username === ""){
+  if(data.username === undefined || data.username === null || data.username === ""){
     throw new Error( 'Please provide an username' );
   }
-  else if(data.password === undefined || data.password === null || data.password === ""){
+  if(data.password === undefined || data.password === null || data.password === ""){
     throw new Error( 'Please provide an password' );
   }
-  else if(data.type_user_Id === undefined || data.type_user_Id === null || isNaN(data.type_user_Id) || data.type_user_Id === "" ){
+  if(data.type_user_Id === undefined || data.type_user_Id === null || isNaN(data.type_user_Id) || data.type_user_Id === "" ){
     throw new Error( 'Please provide an correct type id' );
+  }
+  if(data.password.length < 5){
+    throw new Error( 'THIS PASSWORD IS SO SHORT' );
+  }
+  let result = {};
+  const connection = await getConnection();
+  result = await connection.query(`SELECT ID FROM TYPE_USER WHERE ID = '${data.type_user_Id}'`);
+  if(result.length === 0){
+    throw new Error('INVALID TYPE USER PROVIDED');
   }
 }
 
